@@ -399,6 +399,11 @@
 				DEVELOPMENT_TEAM = KC2AU5ZG57;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
+				INFOPLIST_KEY_NSLocationUsageDescription = "We need your location to automatically fill in the city record entries";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to automatically fill in the city record entries";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "We need microphone access to add entries by voice";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "We need speech recognition to add entries by voice";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -428,6 +433,11 @@
 				DEVELOPMENT_TEAM = KC2AU5ZG57;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
+				INFOPLIST_KEY_NSLocationUsageDescription = "We need your location to automatically fill in the city record entries";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to automatically fill in the city record entries";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "We need microphone access to add entries by voice";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "We need speech recognition to add entries by voice";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
