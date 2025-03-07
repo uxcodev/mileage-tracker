@@ -6,53 +6,78 @@ struct SpeechInputView: View {
     @StateObject private var speechRecognizer = SpeechRecognizer()
     @Environment(\.dismiss) var dismiss
     @StateObject private var locationManager = LocationManager()
+    @State private var showingManualEntry = false
+    @State private var isRecording = false
+    @State private var showingFillUpView = false
+    let showManualEntry: Bool
+    let store: MileageStore
     
     var body: some View {
-        VStack(spacing: 20) {
-            Text("Example formats:")
-                .font(.headline)
-            
-            VStack(alignment: .leading, spacing: 8) {
-                Text("• \"154,000 km 54 L $80\"")
-                Text("• \"154000 kilometers 54 liters $80\"")
-                Text("• \"in Vancouver 154000 km 54 L $80\"")
-                Text("(Location will be used automatically if not specified)")
-            }
-            .font(.subheadline)
-            .foregroundColor(.secondary)
-            
-            if speechRecognizer.transcript.isEmpty {
-                Text("Tap to start recording")
-                    .foregroundColor(.secondary)
-            } else {
-                Text(speechRecognizer.transcript)
-                    .padding()
-                    .background(RoundedRectangle(cornerRadius: 8)
-                        .fill(Color.secondary.opacity(0.1)))
-            }
-            
-            Button(action: {
-                Task { @MainActor in
-                    if speechRecognizer.isRecording {
-                        speechRecognizer.stopRecording()
-                        if let parsedData = speechRecognizer.parsedData {
-                            fillUpData = parsedData
-                            dismiss()
-                        }
-                    } else {
-                        speechRecognizer.startRecording()
-                    }
+        NavigationView {
+            VStack(spacing: 20) {
+                Text("Try saying something like:")
+                    .font(.headline)
+                
+                Text("\"47.3 litres, 77 dollars, 150,000 kilometers in Vancouver\"")
+                    .font(.body)
+                    .foregroundColor(.blue)
+                    .padding(.bottom, 5)
+                
+                Text("(Litres and location are optional)")
+                    .font(.subheadline)
+                
+                
+                if !speechRecognizer.transcript.isEmpty {
+                    Text("Current Input:")
+                        .font(.headline)
+                        .padding(.top)
+                    
+                    Text(speechRecognizer.transcript)
+                        .padding()
+                        .background(RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.secondary.opacity(0.1)))
                 }
-            }) {
-                Image(systemName: speechRecognizer.isRecording ? "stop.circle.fill" : "mic.circle.fill")
-                    .font(.system(size: 64))
-                    .foregroundColor(speechRecognizer.isRecording ? .red : .blue)
+                
+                Spacer()
+                
+                if showManualEntry {
+                    Button("Manual Entry") {
+                        showingManualEntry = true
+                    }
+                    .foregroundColor(.blue)
+                    .padding(.bottom)
+                }
+                
+                Button(action: {
+                    Task { @MainActor in
+                        if isRecording {
+                            speechRecognizer.stopRecording()
+                            if let parsedData = speechRecognizer.parsedData {
+                                fillUpData = parsedData
+                                showingFillUpView = true
+                            }
+                        } else {
+                            speechRecognizer.startRecording()
+                        }
+                        isRecording.toggle()
+                    }
+                }) {
+                    Image(systemName: isRecording ? "stop.circle.fill" : "mic.circle.fill")
+                        .font(.system(size: 64))
+                        .foregroundColor(isRecording ? .red : .blue)
+                        .background(Circle().fill(.white))
+                }
+                .padding(.bottom, 16)
             }
-            .disabled(!speechRecognizer.isAuthorized)
-        }
-        .padding()
-        .onAppear {
-            locationManager.requestLocation()
+            .padding()
+            .navigationTitle("New Fillup")
+            .navigationBarItems(leading: Button("Cancel") { dismiss() })
+            .sheet(isPresented: $showingManualEntry) {
+                NewFillUpView(store: store, onSave: { dismiss() })
+            }
+            .sheet(isPresented: $showingFillUpView) {
+                NewFillUpView(store: store, prefillData: speechRecognizer.parsedData, onSave: { dismiss() })
+            }
         }
     }
 }

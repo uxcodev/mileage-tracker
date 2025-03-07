@@ -1,6 +1,6 @@
 import Foundation
 
-struct FuelFillUp: Identifiable, Codable {
+struct FuelFillUp: Identifiable, Codable, Equatable {
     let id: UUID
     var volume: Double
     var amount: Double
@@ -24,6 +24,15 @@ struct FuelFillUp: Identifiable, Codable {
     
     var gst: Double {
         return amount * 0.05
+    }
+    
+    static func == (lhs: FuelFillUp, rhs: FuelFillUp) -> Bool {
+        lhs.id == rhs.id &&
+        lhs.volume == rhs.volume &&
+        lhs.amount == rhs.amount &&
+        lhs.location == rhs.location &&
+        lhs.odometer == rhs.odometer &&
+        lhs.date == rhs.date
     }
     
     @MainActor

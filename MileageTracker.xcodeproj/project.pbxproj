@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		0108AE052D7A6EEF00F254E4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0108AE042D7A6EEF00F254E4 /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		015CFE082D7A0620008AFC4C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -24,14 +28,28 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0108AE042D7A6EEF00F254E4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		015CFDF72D7A061F008AFC4C /* MileageTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MileageTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		015CFE072D7A0620008AFC4C /* MileageTrackerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MileageTrackerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		015CFE112D7A0621008AFC4C /* MileageTrackerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MileageTrackerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		0108AE032D7A6E2400F254E4 /* Exceptions for "MileageTracker" folder in "MileageTracker" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 015CFDF62D7A061F008AFC4C /* MileageTracker */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		015CFDF92D7A061F008AFC4C /* MileageTracker */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				0108AE032D7A6E2400F254E4 /* Exceptions for "MileageTracker" folder in "MileageTracker" target */,
+			);
 			path = MileageTracker;
 			sourceTree = "<group>";
 		};
@@ -75,6 +93,7 @@
 		015CFDEE2D7A061F008AFC4C = {
 			isa = PBXGroup;
 			children = (
+				0108AE042D7A6EEF00F254E4 /* Assets.xcassets */,
 				015CFDF92D7A061F008AFC4C /* MileageTracker */,
 				015CFE0A2D7A0620008AFC4C /* MileageTrackerTests */,
 				015CFE142D7A0621008AFC4C /* MileageTrackerUITests */,
@@ -212,6 +231,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0108AE052D7A6EEF00F254E4 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -396,10 +416,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"MileageTracker/Preview Content\"";
-				DEVELOPMENT_TEAM = KC2AU5ZG57;
+				DEVELOPMENT_TEAM = UH6SL4W5GK;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "";
+				INFOPLIST_FILE = MileageTracker/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Mileage Tracker";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
 				INFOPLIST_KEY_NSLocationUsageDescription = "We need your location to automatically fill in the city record entries";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to automatically fill in the city record entries";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "We need microphone access to add entries by voice";
@@ -414,7 +436,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = app.qilo.MileageTracker;
+				PRODUCT_BUNDLE_IDENTIFIER = app.qilo.Mileage;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -430,10 +452,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"MileageTracker/Preview Content\"";
-				DEVELOPMENT_TEAM = KC2AU5ZG57;
+				DEVELOPMENT_TEAM = UH6SL4W5GK;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "";
+				INFOPLIST_FILE = MileageTracker/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Mileage Tracker";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
 				INFOPLIST_KEY_NSLocationUsageDescription = "We need your location to automatically fill in the city record entries";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to automatically fill in the city record entries";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "We need microphone access to add entries by voice";
@@ -448,7 +472,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = app.qilo.MileageTracker;
+				PRODUCT_BUNDLE_IDENTIFIER = app.qilo.Mileage;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

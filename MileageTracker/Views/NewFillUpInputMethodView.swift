@@ -77,7 +77,7 @@ struct NewFillUpInputMethodView: View {
                     }
                 }
             }
-            .navigationTitle("Add Fill-up")
+            .navigationTitle("Add Fillup")
             .navigationBarItems(leading: Button("Cancel") {
                 if speechRecognizer.isRecording {
                     speechRecognizer.stopRecording()

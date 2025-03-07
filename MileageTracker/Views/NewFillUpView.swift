@@ -9,6 +9,7 @@ struct NewFillUpView: View {
     @StateObject private var speechRecognizer = SpeechRecognizer()
     @State private var fillUpData = FillUpData()
     @State private var showingSpeechInput = false
+    let onSave: (() -> Void)?
     
     // Form State
     @State private var date = Date()
@@ -18,51 +19,84 @@ struct NewFillUpView: View {
     @State private var location = ""
     @State private var description = ""
     
+    // MARK: - Initialization
+    init(store: MileageStore, prefillData: FillUpData? = nil, onSave: (() -> Void)? = nil) {
+        self.store = store
+        self.onSave = onSave
+        if let data = prefillData {
+            _odometerText = State(initialValue: data.odometer.map { String(format: "%.0f", $0) } ?? "")
+            _litersText = State(initialValue: data.volume.map { String(format: "%.1f", $0) } ?? "")
+            _amountText = State(initialValue: data.amount.map { String(format: "%.2f", $0) } ?? "")
+            _location = State(initialValue: data.location)
+            _fillUpData = State(initialValue: data)
+        }
+    }
+    
     // MARK: - View
     var body: some View {
         NavigationView {
-            FormContent(
-                date: $date,
-                odometerText: $odometerText,
-                litersText: $litersText,
-                amountText: $amountText,
-                location: $location,
-                description: $description,
-                locationManager: locationManager,
-                gst: calculateGST()
-            )
-            .navigationTitle("New Fill-up")
+            ZStack {
+                Form {
+                    FillUpDetailsSection(
+                        odometerText: $odometerText,
+                        litersText: $litersText,
+                        amountText: $amountText
+                    )
+                    
+                    AdditionalDetailsSection(
+                        date: $date,
+                        location: $location,
+                        description: $description,
+                        locationManager: locationManager
+                    )
+                    
+                    if let gst = calculateGST() {
+                        TaxDetailsSection(gst: gst)
+                    }
+                }
+                
+                VStack {
+                    Spacer()
+                    Button(action: {
+                        showingSpeechInput = true
+                    }) {
+                        Image(systemName: "mic.circle.fill")
+                            .font(.system(size: 64))
+                            .foregroundColor(.blue)
+                            .background(Circle().fill(.white))
+                    }
+                    .padding(.bottom, 16)
+                }
+            }
+            .navigationTitle("New Fillup")
             .navigationBarItems(
                 leading: makeCancelButton(),
                 trailing: makeSaveButton()
             )
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    makeMicButton()
-                }
-            }
             .sheet(isPresented: $showingSpeechInput) {
                 SpeechInputView(
-                    fillUpData: $fillUpData
+                    fillUpData: $fillUpData,
+                    showManualEntry: false,
+                    store: store
                 )
             }
-            .onChange(of: locationManager.city) { newCity in
-                if !newCity.isEmpty {
-                    location = newCity
+            .onChange(of: locationManager.city) { oldValue, newValue in
+                if !newValue.isEmpty && location.isEmpty {
+                    location = newValue
                 }
             }
-            .onChange(of: fillUpData) { data in
+            .onChange(of: fillUpData) { oldValue, newValue in
                 // Update form fields when speech input changes
-                if let volume = data.volume {
+                if let volume = newValue.volume {
                     litersText = String(format: "%.1f", volume)
                 }
-                if let amount = data.amount {
+                if let amount = newValue.amount {
                     amountText = String(format: "%.2f", amount)
                 }
-                if !data.location.isEmpty {
-                    location = data.location
+                if !newValue.location.isEmpty {
+                    location = newValue.location
                 }
-                if let odometer = data.odometer {
+                if let odometer = newValue.odometer {
                     odometerText = String(format: "%.0f", odometer)
                 }
             }
@@ -70,47 +104,14 @@ struct NewFillUpView: View {
     }
 }
 
-// MARK: - Private Views
-private struct FormContent: View {
-    @Binding var date: Date
+// MARK: - Form Sections
+private struct FillUpDetailsSection: View {
     @Binding var odometerText: String
     @Binding var litersText: String
     @Binding var amountText: String
-    @Binding var location: String
-    @Binding var description: String
-    let locationManager: LocationManager
-    let gst: Double?
     
     var body: some View {
-        Form {
-            DateSection(date: $date)
-            VehicleDetailsSection(odometerText: $odometerText)
-            FillUpDetailsSection(litersText: $litersText, amountText: $amountText)
-            LocationSection(location: $location, locationManager: locationManager)
-            AdditionalInfoSection(description: $description)
-            if let gst = gst {
-                TaxDetailsSection(gst: gst)
-            }
-        }
-    }
-}
-
-// MARK: - Form Sections
-private struct DateSection: View {
-    @Binding var date: Date
-    
-    var body: some View {
-        Section("Date") {
-            DatePicker("Date", selection: $date, displayedComponents: [.date])
-        }
-    }
-}
-
-private struct VehicleDetailsSection: View {
-    @Binding var odometerText: String
-    
-    var body: some View {
-        Section("Vehicle Details") {
+        Section("Fill-up Details") {
             HStack {
                 Text("Odometer")
                 Spacer()
@@ -118,20 +119,11 @@ private struct VehicleDetailsSection: View {
                     .keyboardType(.numberPad)
                     .multilineTextAlignment(.trailing)
                     .frame(width: 120)
-                    .onChange(of: odometerText) { newValue in
+                    .onChange(of: odometerText) { oldValue, newValue in
                         odometerText = newValue.filter { "0123456789".contains($0) }
                     }
             }
-        }
-    }
-}
-
-private struct FillUpDetailsSection: View {
-    @Binding var litersText: String
-    @Binding var amountText: String
-    
-    var body: some View {
-        Section("Fill-up Details") {
+            
             HStack {
                 Text("Volume")
                 Spacer()
@@ -139,7 +131,7 @@ private struct FillUpDetailsSection: View {
                     .keyboardType(.decimalPad)
                     .multilineTextAlignment(.trailing)
                     .frame(width: 120)
-                    .onChange(of: litersText) { newValue in
+                    .onChange(of: litersText) { oldValue, newValue in
                         litersText = newValue.filter { "0123456789.".contains($0) }
                     }
             }
@@ -151,7 +143,7 @@ private struct FillUpDetailsSection: View {
                     .keyboardType(.decimalPad)
                     .multilineTextAlignment(.trailing)
                     .frame(width: 120)
-                    .onChange(of: amountText) { newValue in
+                    .onChange(of: amountText) { oldValue, newValue in
                         amountText = newValue.filter { "0123456789.".contains($0) }
                     }
             }
@@ -159,29 +151,28 @@ private struct FillUpDetailsSection: View {
     }
 }
 
-private struct LocationSection: View {
+private struct AdditionalDetailsSection: View {
+    @Binding var date: Date
     @Binding var location: String
+    @Binding var description: String
     let locationManager: LocationManager
     
     var body: some View {
-        Section("Location") {
+        Section("Additional Details") {
+            DatePicker("Date", selection: $date, displayedComponents: [.date])
+            
             HStack {
-                TextField("Location", text: $location)
+                Text("Location")
+                Spacer()
+                TextField("Enter location", text: $location)
+                    .multilineTextAlignment(.trailing)
                 Button(action: {
                     locationManager.requestLocation()
                 }) {
                     Image(systemName: "location.fill")
                 }
             }
-        }
-    }
-}
-
-private struct AdditionalInfoSection: View {
-    @Binding var description: String
-    
-    var body: some View {
-        Section("Additional Information") {
+            
             TextField("Description (Optional)", text: $description)
         }
     }
@@ -192,7 +183,11 @@ private struct TaxDetailsSection: View {
     
     var body: some View {
         Section("Tax Details") {
-            Text("GST (5%): $\(String(format: "%.2f", gst))")
+            HStack {
+                Text("GST (5%)")
+                Spacer()
+                Text(String(format: "$%.2f", gst))
+            }
         }
     }
 }
@@ -212,12 +207,6 @@ extension NewFillUpView {
         .disabled(!isValid)
     }
     
-    private func makeMicButton() -> some View {
-        Button(action: { showingSpeechInput = true }) {
-            Image(systemName: "mic.fill")
-        }
-    }
-    
     private func saveForm() {
         guard let volumeDouble = Double(litersText),
               let amountDouble = Double(amountText),
@@ -230,6 +219,7 @@ extension NewFillUpView {
             odometer: odometerDouble
         )
         dismiss()
+        onSave?()
     }
     
     private var isValid: Bool {

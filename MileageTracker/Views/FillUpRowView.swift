@@ -23,7 +23,9 @@ struct FillUpRowView: View {
             .contentShape(Rectangle())
         }
         .sheet(isPresented: $showingEditSheet) {
-            EditFillUpView(store: store, fillUp: fillUp)
+            NavigationView {
+                EditFillUpView(store: store, fillUp: fillUp)
+            }
         }
     }
 } 

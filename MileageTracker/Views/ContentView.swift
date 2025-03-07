@@ -33,7 +33,7 @@ struct ContentView: View {
                 Picker("Filter", selection: $filter) {
                     Text("All").tag(ListFilter.all)
                     Text("Trips").tag(ListFilter.trips)
-                    Text("Fill Ups").tag(ListFilter.fillUps)
+                    Text("Fillups").tag(ListFilter.fillUps)
                 }
                 .pickerStyle(SegmentedPickerStyle())
                 .padding()
@@ -52,14 +52,27 @@ struct ContentView: View {
                     }
                     
                     if filter != .trips {
-                        Section(header: Text("Fill-ups")) {
-                            ForEach(store.fuelFillUps) { fillUp in
-                                FillUpRowView(fillUp: fillUp, store: store)
+                        Section(header: Text("Fillups")) {
+                            ForEach(store.fuelFillUps.sorted(by: { $0.date > $1.date })) { fillUp in
+                                VStack(alignment: .leading) {
+                                    HStack {
+                                        VStack(alignment: .leading) {
+                                            Text(fillUp.location)
+                                                .font(.headline)
+                                            Text(fillUp.date.formatted(date: .numeric, time: .omitted))
+                                                .font(.subheadline)
+                                                .foregroundColor(.secondary)
+                                        }
+                                        Spacer()
+                                        Text(String(format: "$%.2f", fillUp.amount))
+                                            .font(.headline)
+                                    }
+                                }
                             }
                             Button(action: {
-                                activeSheet = .newFillUpOptions
+                                activeSheet = .newFillUp
                             }) {
-                                Label("Add Fill-up", systemImage: "plus")
+                                Label("Add Fillup", systemImage: "plus")
                             }
                         }
                     }
@@ -76,8 +89,8 @@ struct ContentView: View {
                             .cornerRadius(10)
                     }
                     
-                    Button(action: { activeSheet = .newFillUpOptions }) {
-                        Label("New Fill Up", systemImage: "fuelpump.fill")
+                    Button(action: { activeSheet = .newFillUp }) {
+                        Label("New Fillup", systemImage: "fuelpump.fill")
                             .frame(maxWidth: .infinity)
                             .padding()
                             .background(Color.green)
@@ -88,13 +101,13 @@ struct ContentView: View {
                 .padding()
             }
             .navigationTitle("Mileage Tracker")
-            .searchable(text: $searchText, prompt: "Search trips and fill-ups")
+            .searchable(text: $searchText, prompt: "Search trips and fillups")
             .sheet(item: $activeSheet) { sheet in
                 switch sheet {
                 case .newTrip:
                     NewTripView(store: store)
                 case .newFillUp:
-                    NewFillUpView(store: store)
+                    SpeechInputView(fillUpData: .constant(FillUpData()), showManualEntry: true, store: store)
                 case .newFillUpOptions:
                     NewFillUpInputMethodView(store: store)
                 }

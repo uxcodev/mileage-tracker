@@ -16,7 +16,7 @@ class MileageStore: ObservableObject {
         initialOdometer = 209450
         initialOdometerDate = dateFormatter.date(from: "Nov 23/24")
         
-        // Add all fuel fill-ups
+        // Add all fuel fillups
         let fillUps: [(date: String, amount: Double, volume: Double, odometer: Double, location: String)] = [
             ("Nov 23/24", 144.04, 85.028, 209516, "Abbotsford"),
             ("Dec 5/24", 115.00, 68.9, 210308, "Lake Country"),
@@ -31,7 +31,7 @@ class MileageStore: ObservableObject {
             ("Feb 27/25", 56.00, 32.597, 215648, "Lake Country")
         ]
         
-        // Add all fill-ups
+        // Add all fillups
         for fillUp in fillUps {
             if let date = dateFormatter.date(from: fillUp.date) {
                 fuelFillUps.append(FuelFillUp(
